@@ -25,6 +25,5 @@ export 'package:weather_news_aggregator/config/helper_class.dart';
 export 'package:weather_news_aggregator/core/widget/custom_alertdialog.dart';
 export 'package:weather_news_aggregator/core/widget/custom_snackbar.dart';
 export 'package:weather_news_aggregator/model/weather.dart';
-
-
+export 'package:weather_news_aggregator/core/widget/marquee.dart';
 export 'package:weather_news_aggregator/screen/home.dart';

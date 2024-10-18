@@ -19,10 +19,27 @@ class WeatherAndNewsProvider with ChangeNotifier {
     Response response = await baseServices.httpGet(weatherApi);
     if (response.statusCode == 200) {
       _weather = Weather.fromJson(jsonDecode(response.body));
+      weatherBasedNewsFilter(_weather?.currentWeather?.temp_c??0);
     }
     _isFetchingWeatherData= false;
     notifyListeners();
   }
+
+  weatherBasedNewsFilter(double temperature){
+    if(temperature <= 20){
+      // cold
+      fetchNews(NewsAPICategory.health);
+    }else if(temperature <= 24){
+      // cool
+      fetchNews(NewsAPICategory.entertainment);
+    }else if(temperature >= 25){
+      // hot
+      fetchNews(NewsAPICategory.science);
+    }else {
+      fetchNews(NewsAPICategory.general);
+    }
+  }
+
 
   Future<void> fetchNews(NewsAPICategory newsCategory) async {
       BaseService baseServices = BaseService();

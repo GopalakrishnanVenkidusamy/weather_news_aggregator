@@ -11,7 +11,8 @@ enum NewsAPICategory{
   health,
   science,
   sports,
-  technology
+  technology,
+  none
 }
 
 enum TemperatureUnits{

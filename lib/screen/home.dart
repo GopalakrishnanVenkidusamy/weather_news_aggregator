@@ -9,14 +9,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController cityNameController = TextEditingController();
-  NewsAPICategory selectedNewsAPICategory = NewsAPICategory.general;
+  NewsAPICategory selectedNewsAPICategory = NewsAPICategory.none;
   List<bool> selectedTemperatureUnits = [true, false];
 
   @override
   void initState() {
 
     context.read<WeatherAndNewsProvider>().fetchWeather("tiruppur");
-    context.read<WeatherAndNewsProvider>().fetchNews(NewsAPICategory.general);
     super.initState();
   }
 
@@ -412,13 +411,20 @@ class _HomePageState extends State<HomePage> {
             const Icon(Icons.edit_location_outlined,
                 color: Colors.blue),
             ConstWidget.kSizeBoxWidth5,
-            Text(
-                "${context.read<WeatherAndNewsProvider>().weather?.location?.name ?? ""}, ${context.read<WeatherAndNewsProvider>().weather?.location?.region ?? ""}, ${context.read<WeatherAndNewsProvider>().weather?.location?.country ?? ""}",
-                style: TextStyles
-                    .textStyleFontSize18
-                    .copyWith(
-                    fontWeight:
-                    FontWeight.w600)),
+            SizedBox(
+              width: HelperClass.getCurrentPlatform(context) !=
+                  CurrentPlatform.mobile
+                  ?MediaQuery.sizeOf(context).width/1.5:220,
+              child: Marquee(
+                child: Text(
+                    "${context.read<WeatherAndNewsProvider>().weather?.location?.name ?? ""}, ${context.read<WeatherAndNewsProvider>().weather?.location?.region ?? ""}, ${context.read<WeatherAndNewsProvider>().weather?.location?.country ?? ""}",
+                    style: TextStyles
+                        .textStyleFontSize18
+                        .copyWith(
+                        fontWeight:
+                        FontWeight.w600)),
+              ),
+            ),
           ],
         ));
   }
@@ -553,7 +559,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ],
-    );
-  }
+    );}
+
 
 }
