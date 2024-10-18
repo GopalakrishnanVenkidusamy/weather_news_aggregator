@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("Today News"),
         titleTextStyle: TextStyles.textStyleFontSize20
-            .copyWith(fontWeight: FontWeight.bold),
+            .copyWith(fontWeight: FontWeight.bold,color: Colors.black),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -78,13 +78,17 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 /// Weather Forecast Title
                                 SizedBox(
-                                  width: 250,
-                                  child: Text("Today's Weather Forecast",
-                                      style: TextStyles.textStyleFontSize20
-                                          .copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 25),
-                                      maxLines: 1),
+                                  width: HelperClass.getCurrentPlatform(context) !=
+                                      CurrentPlatform.mobile
+                                      ? MediaQuery.sizeOf(context).width/2:190,
+                                  child: Marquee(
+                                    child: Text("Today's Weather Forecast",
+                                        style: TextStyles.textStyleFontSize20
+                                            .copyWith(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 25),
+                                        maxLines: 1),
+                                  ),
                                 ),
                                 ConstWidget.kSizeBoxHeight5,
 
@@ -145,16 +149,16 @@ class _HomePageState extends State<HomePage> {
                                 temperatureToggle(),
                                 /// Weather Image
                                 SizedBox(
-                                  height: 120,
-                                  width: 150,
+                                  height: 140,
+                                  width: 120,
                                   child: Image.network(
-                                    context
+                                   "https:${context
                                             .read<WeatherAndNewsProvider>()
                                             .weather
                                             ?.currentWeather
                                             ?.condition
                                             ?.icon ??
-                                        "",
+                                        ""}",
                                   ),
                                 ),
                               ],
@@ -414,7 +418,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               width: HelperClass.getCurrentPlatform(context) !=
                   CurrentPlatform.mobile
-                  ?MediaQuery.sizeOf(context).width/1.5:220,
+                  ?MediaQuery.sizeOf(context).width/1.5:MediaQuery.sizeOf(context).width/2.5,
               child: Marquee(
                 child: Text(
                     "${context.read<WeatherAndNewsProvider>().weather?.location?.name ?? ""}, ${context.read<WeatherAndNewsProvider>().weather?.location?.region ?? ""}, ${context.read<WeatherAndNewsProvider>().weather?.location?.country ?? ""}",
@@ -475,21 +479,21 @@ class _HomePageState extends State<HomePage> {
             ?.length ??
             0,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisExtent: 100,
+          mainAxisExtent: 120,
           crossAxisCount: HelperClass.getCurrentPlatform(context) ==
               CurrentPlatform.web
-              ? 5
+              ? 4
               : HelperClass.getCurrentPlatform(context) !=
               CurrentPlatform.mobile
               ? 3
-              : 2,
+              : 1,
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
         ),
         itemBuilder: (BuildContext context, int index) {
           /// Weather Forecast View 5 Days
           return weatherMinMaxTemp(
-            context
+            "https:${context
                 .read<WeatherAndNewsProvider>()
                 .weather
                 ?.forecast
@@ -497,7 +501,7 @@ class _HomePageState extends State<HomePage> {
                 .day
                 ?.condition
                 ?.icon ??
-                "",
+                ""}",
             context
                 .read<WeatherAndNewsProvider>()
                 .weather
@@ -506,11 +510,11 @@ class _HomePageState extends State<HomePage> {
                 .date ??
                 "",
             selectedTemperatureUnits.first == true
-                ? "${context.read<WeatherAndNewsProvider>().weather?.forecast?.forecastday?[index].day?.minTempC?.toString() ?? ""}\u00B0C"
-                : "${context.read<WeatherAndNewsProvider>().weather?.forecast?.forecastday?[index].day?.minTempC?.toString() ?? ""}\u00B0F",
+                ? "${context.read<WeatherAndNewsProvider>().weather?.forecast?.forecastday?[index].day?.minTempC?.toStringAsFixed(1) ?? ""}\u00B0C"
+                : "${context.read<WeatherAndNewsProvider>().weather?.forecast?.forecastday?[index].day?.minTempC?.toStringAsFixed(1) ?? ""}\u00B0F",
             selectedTemperatureUnits.first == true
-                ? "${context.read<WeatherAndNewsProvider>().weather?.forecast?.forecastday?[index].day?.maxTempC?.toString() ?? ""}\u00B0C"
-                : "${context.read<WeatherAndNewsProvider>().weather?.forecast?.forecastday?[index].day?.minTempC?.toString() ?? ""}\u00B0F",
+                ? "${context.read<WeatherAndNewsProvider>().weather?.forecast?.forecastday?[index].day?.maxTempC?.toStringAsFixed(1) ?? ""}\u00B0C"
+                : "${context.read<WeatherAndNewsProvider>().weather?.forecast?.forecastday?[index].day?.minTempC?.toStringAsFixed(1) ?? ""}\u00B0F",
           );
         },
       ),
@@ -529,26 +533,39 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 25.0),
-                child: Text(
-                  HelperClass().formatDateWithoutTime(date),
-                  style: TextStyles.textStyleFontSize14.copyWith(
-                      fontWeight: FontWeight.w600, color: Colors.black),
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Row(
+                  children: [
+                    const Icon(Icons.today_outlined),
+                    ConstWidget.kSizeBoxWidth5,
+                    Text(
+                      HelperClass().formatDateWithoutTime(date),
+                      style: TextStyles.textStyleFontSize14.copyWith(
+                          fontWeight: FontWeight.w600, color: Colors.black),
+                    ),
+                  ],
                 ),
               ),
+              ConstWidget.kSizeBoxHeight10,
               Row(
                 children: [
-                  Image.network(imageUrl),
                   ConstWidget.kSizeBoxWidth10,
+                  Image.network(imageUrl??
+                          "",
+                      errorBuilder: (context, error, stackTrace) {
+                        /// Error News Image
+                        return Container(); // Provide a local placeholder image
+                      }),
+                  ConstWidget.kSizeBoxWidth20,
                   Column(
                     children: [
                       Text("Temp.Min  : $tempMin",
-                          style: TextStyles.textStyleFontSize12.copyWith(
+                          style: TextStyles.textStyleFontSize14.copyWith(
                               fontWeight: FontWeight.w600,
                               color: Colors.black)),
                       ConstWidget.kSizeBoxHeight5,
                       Text("Temp.Max : $tempMax",
-                          style: TextStyles.textStyleFontSize12.copyWith(
+                          style: TextStyles.textStyleFontSize14.copyWith(
                               fontWeight: FontWeight.w600,
                               color: Colors.black)),
                     ],
